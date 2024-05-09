@@ -26,6 +26,26 @@ void MainWindow::on_pushButton_clicked()
 
 }
 
+uint32_t  MainWindow::crc32(QString data,uint32_t crc)
+{
+    const uint32_t polynomial = 0xEDB88320;
+
+
+    for (int i = 0; i < data.size(); ++i) {
+        crc ^= int32_t(data[i].toLatin1());
+        for (int j = 0; j < 8; ++j) {
+            if (crc & 1) {
+                crc = (crc >> 1) ^ polynomial;
+            } else {
+                crc >>= 1;
+            }
+        }
+    }
+
+    return crc;
+}
+
+
 void MainWindow::readFile(QString address)
 {
     QFile file(address);
@@ -36,15 +56,22 @@ void MainWindow::readFile(QString address)
         return;
     }
 
-    auto data=file.readAll();
+    uint32_t crc=0xFFFFFFFF;
 
-    QString binaryData;
+    while (!file.atEnd()) {
 
-    for(int i=0;i<data.size();i++){
-        binaryData+=QString::number(data[i],2);
+        QString str;
+
+        int mByte=1024*1024;
+
+        str=file.read(mByte);
+
+        crc=crc32(str,crc);
     }
 
 
     file.close();
 
 }
+
+

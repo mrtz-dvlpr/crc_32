@@ -15,6 +15,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    uint32_t crc32(QString data, uint32_t crc = 0xFFFFFFFF);
 private slots:
     void on_pushButton_clicked();
 
@@ -23,6 +24,5 @@ private:
 
     void readFile(QString address);
 
-    QString checkSum;
 };
 #endif // MAINWINDOW_H
